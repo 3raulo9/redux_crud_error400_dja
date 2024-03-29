@@ -5,7 +5,7 @@ from rest_framework import serializers
 class Product(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     desc = models.CharField(max_length=50, null=True, blank=True)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
+    price = models.DecimalField(max_digits=100, decimal_places=2)
     createdTime = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(null=True, blank=True, upload_to='images/')
     completed = models.BooleanField(default=False)

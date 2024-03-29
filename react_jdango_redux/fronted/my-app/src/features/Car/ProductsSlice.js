@@ -1,35 +1,41 @@
-    import { createSlice } from '@reduxjs/toolkit';
+// src/features/Car/ProductsSlice.js
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { submitProduct, fetchProducts } from './ProductsAPI';
 
-    const initialState = {
-        Products: [],
-        newProduct: { image: null }
-    };
-    
-    const ProductSlice = createSlice({
-        name: 'Product',
-        initialState,
-        reducers: {
-            getProduct: (state, action) => {
-                return action.payload;
-            },
-            addProduct: (state, action) => {
-                state.Products.push(action.payload);
-            },
-            deleteProduct: (state, action) => {
-                state.Products = state.Products.filter((Product) => Product.id !== action.payload);
-            },
-            updateProduct: (state, action) => {
-                const index = state.Products.findIndex((Product) => Product.id === action.payload.id);
-                if (index !== -1) {
-                    state.Products[index] = action.payload;
-                }
-            },
-            handleImageChange: (state, action) => {
-                state.newProduct.image = action.payload;
-            }
-        },
-    });
+export const addNewProduct = createAsyncThunk(
+  'products/addNewProduct',
+  async (productData, { rejectWithValue }) => {
+    try {
+      const response = await submitProduct(productData);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
-    export const { getProduct, addProduct, deleteProduct, updateProduct, handleImageChange } = ProductSlice.actions;
+export const productsSlice = createSlice({
+  name: 'products',
+  initialState: {
+    products: [],
+    status: 'idle',
+    error: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(addNewProduct.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(addNewProduct.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.products.push(action.payload);
+      })
+      .addCase(addNewProduct.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload;
+      });
+  },
+});
 
-    export default ProductSlice.reducer;
+export default productsSlice.reducer;

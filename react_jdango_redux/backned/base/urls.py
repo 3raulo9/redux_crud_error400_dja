@@ -7,7 +7,7 @@ from .views import GetImages, Products, ProductsView, UserRegistration  # Correc
 
 urlpatterns = [
     path('login', TokenObtainPairView.as_view()),  # Updated endpoint with trailing slash
-    path('register/', UserRegistration.as_view(), name='register'),  # Updated endpoint with trailing slash
+    path('register', UserRegistration.as_view(), name='register'),  # Updated endpoint with trailing slash
     path('images/', GetImages.as_view(), name='get-images'),
     path('products/', Products),  # Function-based view for API endpoint
     path('products/<int:id>/', ProductsView.as_view()), # Updated endpoint with trailing slash and using Products view
